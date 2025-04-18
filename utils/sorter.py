@@ -1,6 +1,6 @@
 from datetime import datetime
 
-class MostUsed:
+class MostVisited:
     """
     This class is used to track the most used items.
     It allows adding items and sorting them based on their usage count.
@@ -57,8 +57,8 @@ def sort_strategy(setting):
     :return: The sorting strategy
     """
     if setting == "most_used":
-        return MostUsed()
-    elif setting == "recent_used":
+        return MostVisited()
+    elif setting == "recent":
         return RecentUsed()
     else:
         return NoSort()

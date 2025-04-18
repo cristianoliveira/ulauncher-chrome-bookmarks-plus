@@ -63,7 +63,10 @@ class PreferencesEventListener(EventListener):
             extension.preferences = event.preferences
         # Could be optimized so it only refreshes the custom paths
         extension.bookmarks_paths = extension.find_bookmarks_paths()
-
+        extension.sorter = sort_strategy(
+            extension.preferences["sort_by"]
+        )
+        extension.foo = extension.preferences["sort_by"]
 
 class KeywordQueryEventListener(EventListener):
     def on_event(  # type: ignore
@@ -76,6 +79,9 @@ class KeywordQueryEventListener(EventListener):
 class BrowserBookmarks(Extension):
     max_matches_len = 10
     bookmarks_paths: List[Tuple[str, str]]
+    sorter = sort_strategy("None")
+
+    foo = None
 
     def __init__(self):
         super(BrowserBookmarks, self).__init__()
@@ -86,10 +92,6 @@ class BrowserBookmarks(Extension):
 
         # Subscribe to keyword query events
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
-
-        self.sorter = sort_strategy(
-            self.preferences["sort_by"]
-        )
 
     def find_bookmarks_paths(self) -> List[Tuple[str, str]]:
         """
@@ -200,9 +202,7 @@ class BrowserBookmarks(Extension):
                 querier.search(data["roots"]["synced"], query, matches)
                 querier.search(data["roots"]["other"], query, matches)
 
-            matches = self.sorter.sort(
-                matches, by_key="url"
-            )
+            matches = self.sorter.sort(matches, by_key="url")
             for bookmark in matches:
                 bookmark_name: bytes = str(bookmark["name"]).encode("utf-8")
                 bookmark_url: bytes = str(bookmark["url"]).encode("utf-8")

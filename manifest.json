@@ -29,8 +29,14 @@
       "description": "When enabled, takes into account the folder structure of bookmarks while filtering",
       "default_value": false,
       "options": [
-          {"text": "Disabled", "value": false},
-          {"text": "Enabled", "value": true}
+        {
+          "text": "Disabled",
+          "value": false
+        },
+        {
+          "text": "Enabled",
+          "value": true
+        }
       ]
     },
     {
@@ -40,9 +46,18 @@
       "description": "The order in which to show the bookmarks",
       "default_value": "none",
       "options": [
-          {"text": "Most visited", "value": "most_visited"},
-          {"text": "Recent visited", "value": "recent"},
-          {"text": "None", "value": "none"}
+        {
+          "text": "Most visited",
+          "value": "most_used"
+        },
+        {
+          "text": "Recent visited",
+          "value": "recent"
+        },
+        {
+          "text": "None",
+          "value": "none"
+        }
       ]
     }
   ]

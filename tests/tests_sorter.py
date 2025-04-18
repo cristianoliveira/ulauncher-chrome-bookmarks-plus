@@ -1,9 +1,9 @@
 import unittest
-from utils.sorter import MostUsed, RecentUsed
+from utils.sorter import MostVisited, RecentUsed
 
 class TestMostUsed(unittest.TestCase):
     def test_it_does_throw_when_empty(self):
-        most_used = MostUsed()
+        most_used = MostVisited()
         items = []
 
         sorted_items = most_used.sort(items, 'name')
@@ -19,7 +19,7 @@ class TestMostUsed(unittest.TestCase):
         self.assertEqual(sorted_items, [])
 
     def test_sort_by_usage(self):
-        most_used = MostUsed()
+        most_used = MostVisited()
         items = [
             {'name': 'item1'},
             {'name': 'item2'},
