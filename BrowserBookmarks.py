@@ -3,6 +3,7 @@ import logging
 import os
 from typing import List, Tuple, Dict, Union
 from querier import BookmarkQuerier
+from utils.sorter import sort_strategy
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
@@ -39,7 +40,6 @@ browser_imgs = {
     "vivaldi": "images/vivaldi.png",
     "custom_path": "images/chromium.png",
 }
-
 
 class PreferencesEventListener(EventListener):
     def on_event(
@@ -86,6 +86,10 @@ class BrowserBookmarks(Extension):
 
         # Subscribe to keyword query events
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
+
+        self.sorter = sort_strategy(
+            self.preferences["sort_by"]
+        )
 
     def find_bookmarks_paths(self) -> List[Tuple[str, str]]:
         """
@@ -153,6 +157,19 @@ class BrowserBookmarks(Extension):
 
         return bookmarks_paths
 
+    def handle_on_enter(self, url: str) -> OpenUrlAction:
+        """
+        Handles the on enter event for the bookmark item
+
+        Parameters:
+            url (str): The URL to open
+
+        Returns:
+            OpenUrlAction: An action to open the URL
+        """
+        self.sorter.add(url)
+        return OpenUrlAction(url)
+
     def get_items(self, query: Union[str, None]) -> List[ExtensionResultItem]:
         """
         Returns a list of ExtensionResultItems for the query, which is rendered by Ulauncher
@@ -183,6 +200,9 @@ class BrowserBookmarks(Extension):
                 querier.search(data["roots"]["synced"], query, matches)
                 querier.search(data["roots"]["other"], query, matches)
 
+            matches = self.sorter.sort(
+                matches, by_key="url"
+            )
             for bookmark in matches:
                 bookmark_name: bytes = str(bookmark["name"]).encode("utf-8")
                 bookmark_url: bytes = str(bookmark["url"]).encode("utf-8")
@@ -190,7 +210,7 @@ class BrowserBookmarks(Extension):
                     icon=browser_imgs.get(browser),
                     name=str(bookmark_name.decode("utf-8")),
                     description=str(bookmark_url.decode("utf-8")),
-                    on_enter=OpenUrlAction(bookmark_url.decode("utf-8")),
+                    on_enter=self.handle_on_enter(str(bookmark_url.decode("utf-8"))),
                 )
                 items.append(item)
 

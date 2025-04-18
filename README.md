@@ -12,7 +12,11 @@ https://github.com/pascalbe-dev/ulauncher-browser-bookmarks/assets/26909176/c39d
 
 ### This fork features
 
- - Filter by folders
+- Filter by folders
+- Configurable sort method
+  - Sort by Most Visited
+  - Sort by Last Visited
+  - No Sort
 
 ### Upstream
 - search and open browser bookmarks

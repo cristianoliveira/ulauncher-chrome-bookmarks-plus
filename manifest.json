@@ -32,6 +32,18 @@
           {"text": "Disabled", "value": false},
           {"text": "Enabled", "value": true}
       ]
+    },
+    {
+      "id": "sort_by",
+      "type": "select",
+      "name": "Sort matches by Most visited | Recent | None",
+      "description": "The order in which to show the bookmarks",
+      "default_value": "none",
+      "options": [
+          {"text": "Most visited", "value": "most_visited"},
+          {"text": "Recent visited", "value": "recent"},
+          {"text": "None", "value": "none"}
+      ]
     }
   ]
 }
