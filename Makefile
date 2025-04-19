@@ -4,9 +4,12 @@ help: ## Lists the available commands. Add a comment with '##' to describe a com
 		| sort\
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: setup
-setup: ## Setup extension in ~/.local/share/ulauncher/extensions/
+.PHONY: install
+install: ## Install ulauncher extension
 	ln -sf $(shell pwd) ~/.local/share/ulauncher/extensions/
+
+.PHONY: setup
+setup: install ## Setup extension in ~/.local/share/ulauncher/extensions/
 	python -m venv .venv
 	source .venv/bin/activate
 	pip install -r requirements.txt

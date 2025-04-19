@@ -175,8 +175,7 @@ class BrowserBookmarks(Extension):
         """
 
         self.sorter.add(url)
-
-        return OpenUrlAction(url)
+        return OpenUrlAction(url).run()
 
     def get_items(self, query: Union[str, None]) -> List[ExtensionResultItem]:
         """
