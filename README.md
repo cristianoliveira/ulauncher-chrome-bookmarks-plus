@@ -1,8 +1,8 @@
-# ulauncher-browser-bookmarks
+# ulauncher-chrome-bookmarks-plus
 
-> [ulauncher](https://ulauncher.io/) Extension to quickly open browser bookmarks.
+An advanced fork of [ulauncher-browser-bookmarks](https://github.com/pascalbe-dev/ulauncher-browser-bookmarks) see: [this fork features](#this-fork-features)
 
-❗ This extension is heavily based on [this extension](https://github.com/nortmas/chrome-bookmarks). It's published as separate extension, because the original extension is hardly maintained anymore. Special thanks to Dmitry Antonenko for developing the original extension 👏
+> [ulauncher](https://ulauncher.io/) Extension to quickly open chrome bookmarks.
 
 ## Demo
 
@@ -17,8 +17,10 @@ https://github.com/pascalbe-dev/ulauncher-browser-bookmarks/assets/26909176/c39d
   - Sort by Most Visited
   - Sort by Last Visited
   - No Sort
+- Bookmark indexing for performance
 
 ### Upstream
+
 - search and open browser bookmarks
   - search by single text (must be contained in the bookmark title)
   - search by multiple texts split by space (all must be contained in the bookmark title)
@@ -56,6 +58,30 @@ Please refer to [the contribution guidelines](./CONTRIBUTING.md)
 
 1. Clone the repo `git clone https://github.com/pascalbe-dev/ulauncher-browser-bookmarks.git`
 2. Cd into the folder `cd ulauncher-browser-bookmarks`
+
+3. Install the requirements `pip install -r requirements.txt` or simply 
+```bash
+pip install -r requirements.txt --user
+## or
+make setup
+```
+
+4. Running
+```bash
+make start
+```
+
+5. Once you are done
+```bash
+make stop
+```
+
+### Tests
+
+To run the unit tests
+```bash
+make test
+```
 
 ### Quality insurance
 
