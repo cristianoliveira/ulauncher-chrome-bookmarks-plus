@@ -89,7 +89,7 @@ bookmarks = {
 }
 class TestBookmarkQuerierNoFilterByFolders(unittest.TestCase):
     def setUp(self):
-        self.querier = BookmarkQuerier()
+        self.querier = BookmarkQuerier([bookmarks], filter_by_folders=False)
 
     def test_matches_any_bookmark_that_contains_query_words(self):
         matches = []
@@ -132,7 +132,7 @@ class TestBookmarkQuerierNoFilterByFolders(unittest.TestCase):
         self.querier.search(bookmarks, "advanced tutorial", matches)
         self.assertEqual(len(matches), 0)
 
-    def test_query_max_matches(self):
+    def test_collect_all_matches(self):
         # Create a bookmark structure with many entries
         many_bookmarks = {
                 "type": "folder",
@@ -148,11 +148,11 @@ class TestBookmarkQuerierNoFilterByFolders(unittest.TestCase):
 
         matches = []
         self.querier.search(many_bookmarks, "Test", matches)
-        self.assertEqual(len(matches), 10)  # Should stop at max_matches_len 
+        self.assertEqual(len(matches), 15)
 
 class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
     def setUp(self):
-        self.querier = BookmarkQuerier(filter_by_folders=True)
+        self.querier = BookmarkQuerier([bookmarks], filter_by_folders=True)
 
     def test_matches_any_bookmark_that_contains_query_words(self):
         matches = []
@@ -181,7 +181,7 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
         self.assertEqual(matches[0]["name"], "git tutorial")
         self.assertEqual(matches[1]["name"], "Python Tutorial")
 
-    def test_query_max_matches(self):
+    def test_collect_all_matches(self):
         # Create a bookmark structure with many entries
         many_bookmarks = {
             "type": "folder",
@@ -197,7 +197,7 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
 
         matches = []
         self.querier.search(many_bookmarks, "Test", matches)
-        self.assertEqual(len(matches), 10)  # Should stop at max_matches_len 
+        self.assertEqual(len(matches), 15)  # Should stop at max_matches_len 
     
     def test_search_matches_parent_folder(self):
         matches = []
@@ -248,3 +248,21 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
         self.assertEqual(len(matches), 0) 
         self.querier.search(bookmarks, "java docs", matches)
         self.assertEqual(len(matches), 0) 
+
+class TestBookmarkQuerierIndexer(unittest.TestCase):
+    def test_index_bookmark_entry(self):
+        # Test that it indexes a bookmark entry correctly
+        querier = BookmarkQuerier([bookmarks])
+        querier.index(bookmarks)
+        self.assertEqual(len(querier.indexed_bookmarks), 11)
+        self.assertIn("git tutorial https://git.org", querier.indexed_bookmarks)
+        self.assertIn("Python Tutorial https://learn.python.org", querier.indexed_bookmarks)
+        self.assertIn("Python Tricks Tutorial https://realpython.com", querier.indexed_bookmarks)
+
+    def test_index_folder_entry(self):
+        # Test that it indexes a folder entry correctly
+        querier = BookmarkQuerier([bookmarks], filter_by_folders=True)
+        indexed = querier.index(bookmarks)
+        self.assertIn("git tutorial https://git.org", indexed)
+        self.assertIn("Python Documentation https://docs.python.org", indexed)
+        self.assertIn("Python Python Tutorial https://learn.python.org", indexed)

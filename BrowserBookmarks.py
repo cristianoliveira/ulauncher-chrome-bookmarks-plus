@@ -201,14 +201,19 @@ class BrowserBookmarks(Extension):
         for bookmarks_path, browser in self.bookmarks_paths:
             matches: List[Dict[str, str | Dict[str, str]]] = []
 
+            bookmarks = []
             with open(bookmarks_path) as data_file:
                 data = json.load(data_file)
-                querier.search(data["roots"]["bookmark_bar"], query, matches)
-                querier.search(data["roots"]["synced"], query, matches)
-                querier.search(data["roots"]["other"], query, matches)
+                bookmarks.append(data["roots"]["bookmark_bar"])
+                bookmarks.append(data["roots"]["synced"])
+                bookmarks.append(data["roots"]["other"])
+
+            querier.index_list(bookmarks)
+
+            querier.search({}, query, matches)
 
             matches = self.sorter.sort(matches, by_key="url")
-            for bookmark in matches:
+            for bookmark in matches[: self.max_matches_len]:
                 bookmark_name: bytes = str(bookmark["name"]).encode("utf-8")
                 bookmark_url: bytes = str(bookmark["url"]).encode("utf-8")
                 items.append(ExtensionResultItem(
