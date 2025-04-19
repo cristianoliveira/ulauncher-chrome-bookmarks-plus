@@ -30,11 +30,11 @@ class RecentUsed:
         self.items = {}
 
     def add(self, key):
-        self.items[key] = datetime.now()
+        self.items[key] = datetime.now().timestamp()
 
     def sort(self, current_items, by_key):
         sorted_items = sorted(
-            current_items, key=lambda x: self.items.get(x.get(by_key), datetime.min), reverse=True
+            current_items, key=lambda x: self.items.get(x.get(by_key), 0.0), reverse=True
         )
         return sorted_items
 

@@ -9,10 +9,12 @@ from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.shared.action.OpenUrlAction import OpenUrlAction
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 from ulauncher.api.shared.event import (
     KeywordQueryEvent,
     PreferencesEvent,
     PreferencesUpdateEvent,
+    ItemEnterEvent,
 )
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
@@ -40,6 +42,11 @@ browser_imgs = {
     "vivaldi": "images/vivaldi.png",
     "custom_path": "images/chromium.png",
 }
+
+class SelectItemEventListener(EventListener):
+    def on_event(self, event: ItemEnterEvent, extension: "BrowserBookmarks") -> None:
+        url = event.get_data()
+        extension.handle_on_item_selected(url)
 
 class PreferencesEventListener(EventListener):
     def on_event(
@@ -75,7 +82,6 @@ class KeywordQueryEventListener(EventListener):
         items = extension.get_items(event.get_argument())
         return RenderResultListAction(items)
 
-
 class BrowserBookmarks(Extension):
     max_matches_len = 10
     bookmarks_paths: List[Tuple[str, str]]
@@ -92,6 +98,7 @@ class BrowserBookmarks(Extension):
 
         # Subscribe to keyword query events
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
+        self.subscribe(ItemEnterEvent, SelectItemEventListener())
 
     def find_bookmarks_paths(self) -> List[Tuple[str, str]]:
         """
@@ -159,17 +166,16 @@ class BrowserBookmarks(Extension):
 
         return bookmarks_paths
 
-    def handle_on_enter(self, url: str) -> OpenUrlAction:
+    def handle_on_item_selected(self, url: str):
         """
         Handles the on enter event for the bookmark item
 
         Parameters:
             url (str): The URL to open
-
-        Returns:
-            OpenUrlAction: An action to open the URL
         """
+
         self.sorter.add(url)
+
         return OpenUrlAction(url)
 
     def get_items(self, query: Union[str, None]) -> List[ExtensionResultItem]:
@@ -206,12 +212,11 @@ class BrowserBookmarks(Extension):
             for bookmark in matches:
                 bookmark_name: bytes = str(bookmark["name"]).encode("utf-8")
                 bookmark_url: bytes = str(bookmark["url"]).encode("utf-8")
-                item = ExtensionResultItem(
+                items.append(ExtensionResultItem(
                     icon=browser_imgs.get(browser),
                     name=str(bookmark_name.decode("utf-8")),
                     description=str(bookmark_url.decode("utf-8")),
-                    on_enter=self.handle_on_enter(str(bookmark_url.decode("utf-8"))),
-                )
-                items.append(item)
+                    on_enter=ExtensionCustomAction(str(bookmark_url.decode("utf-8"))),
+                ))
 
         return items

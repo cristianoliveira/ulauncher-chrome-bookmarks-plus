@@ -26,6 +26,10 @@ class TestMostUsed(unittest.TestCase):
             {'name': 'item3'}
         ]
 
+        no_changes = most_used.sort(items, 'name')
+
+        self.assertEqual(items[0]["name"], no_changes[0]["name"])
+
         # Simulate usage
         most_used.add(items[0].get('name'))
         most_used.add(items[1].get('name'))
