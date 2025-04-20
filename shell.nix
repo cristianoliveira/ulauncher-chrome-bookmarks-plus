@@ -5,6 +5,7 @@
     buildInputs = [
       python3
       python3Packages.virtualenv
+      python3Packages.ruff
       # It is essential **not** to add `pip` here as
       # it would prevent proper virtualenv creation.
       inotify-tools

@@ -43,10 +43,12 @@ browser_imgs = {
     "custom_path": "images/chromium.png",
 }
 
+
 class SelectItemEventListener(EventListener):
     def on_event(self, event: ItemEnterEvent, extension: "BrowserBookmarks") -> None:
         url = event.get_data()
         extension.handle_on_item_selected(url)
+
 
 class PreferencesEventListener(EventListener):
     def on_event(
@@ -70,10 +72,9 @@ class PreferencesEventListener(EventListener):
             extension.preferences = event.preferences
         # Could be optimized so it only refreshes the custom paths
         extension.bookmarks_paths = extension.find_bookmarks_paths()
-        extension.sorter = sort_strategy(
-            extension.preferences["sort_by"]
-        )
+        extension.sorter = sort_strategy(extension.preferences["sort_by"])
         extension.foo = extension.preferences["sort_by"]
+
 
 class KeywordQueryEventListener(EventListener):
     def on_event(  # type: ignore
@@ -81,6 +82,7 @@ class KeywordQueryEventListener(EventListener):
     ) -> RenderResultListAction:
         items = extension.get_items(event.get_argument())
         return RenderResultListAction(items)
+
 
 class BrowserBookmarks(Extension):
     max_matches_len = 10
@@ -216,11 +218,15 @@ class BrowserBookmarks(Extension):
             for bookmark in matches[: self.max_matches_len]:
                 bookmark_name: bytes = str(bookmark["name"]).encode("utf-8")
                 bookmark_url: bytes = str(bookmark["url"]).encode("utf-8")
-                items.append(ExtensionResultItem(
-                    icon=browser_imgs.get(browser),
-                    name=str(bookmark_name.decode("utf-8")),
-                    description=str(bookmark_url.decode("utf-8")),
-                    on_enter=ExtensionCustomAction(str(bookmark_url.decode("utf-8"))),
-                ))
+                items.append(
+                    ExtensionResultItem(
+                        icon=browser_imgs.get(browser),
+                        name=str(bookmark_name.decode("utf-8")),
+                        description=str(bookmark_url.decode("utf-8")),
+                        on_enter=ExtensionCustomAction(
+                            str(bookmark_url.decode("utf-8"))
+                        ),
+                    )
+                )
 
         return items

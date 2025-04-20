@@ -32,3 +32,11 @@ start: ## Attemps to kill current ulauncher process and starts a new one.
 stop: ## Stop ulauncher process
 	ps aux | grep ulauncher | grep -v grep | awk '{print $$2}' | xargs kill -9
 
+.PHONY: lint
+lint: ## Check code style using flake8
+	ruff check
+
+.PHONY: format
+format: ## Format code using black
+	ruff check --fix
+	ruff format

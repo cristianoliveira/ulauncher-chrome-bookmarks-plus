@@ -5,11 +5,7 @@ bookmarks = {
     "type": "folder",
     "name": "root",
     "children": [
-        {
-            "type": "bookmark",
-            "name": "git tutorial",
-            "url": "https://git.org"
-        },
+        {"type": "bookmark", "name": "git tutorial", "url": "https://git.org"},
         {
             "type": "folder",
             "name": "Python",
@@ -17,12 +13,12 @@ bookmarks = {
                 {
                     "type": "bookmark",
                     "name": "Documentation",
-                    "url": "https://docs.python.org"
+                    "url": "https://docs.python.org",
                 },
                 {
                     "type": "bookmark",
                     "name": "Python Tutorial",
-                    "url": "https://learn.python.org"
+                    "url": "https://learn.python.org",
                 },
                 {
                     "type": "folder",
@@ -31,21 +27,21 @@ bookmarks = {
                         {
                             "type": "bookmark",
                             "name": "Documentation and Tutorial - python",
-                            "url": "https://documentation.python.org"
+                            "url": "https://documentation.python.org",
                         },
                         {
                             "type": "bookmark",
                             "name": "Python Tricks Tutorial",
-                            "url": "https://realpython.com"
+                            "url": "https://realpython.com",
                         },
                         {
                             "type": "bookmark",
                             "name": "Zen of Python",
-                            "url": "https://peps.python.org/pep-0020/"
-                        }
-                    ]
-                }
-            ]
+                            "url": "https://peps.python.org/pep-0020/",
+                        },
+                    ],
+                },
+            ],
         },
         {
             "type": "folder",
@@ -54,12 +50,12 @@ bookmarks = {
                 {
                     "type": "bookmark",
                     "name": "Documentation",
-                    "url": "https://docs.typescript.org"
+                    "url": "https://docs.typescript.org",
                 },
                 {
                     "type": "bookmark",
                     "name": "Typescript Tutorial",
-                    "url": "https://learn.typescript.org"
+                    "url": "https://learn.typescript.org",
                 },
                 {
                     "type": "folder",
@@ -68,25 +64,26 @@ bookmarks = {
                         {
                             "type": "bookmark",
                             "name": "Documentation and Tutorial",
-                            "url": "https://documentation.typescript.org"
+                            "url": "https://documentation.typescript.org",
                         },
                         {
                             "type": "bookmark",
                             "name": "Typescript Tricks Tutorial",
-                            "url": "https://typescript.org"
+                            "url": "https://typescript.org",
                         },
                         {
                             "type": "bookmark",
                             "name": "Zen of Typescript",
-                            "url": "https://notfound.com"
-                        }
-                    ]
-                }
-
-            ]
-        }
-    ]
+                            "url": "https://notfound.com",
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
 }
+
+
 class TestBookmarkQuerierNoFilterByFolders(unittest.TestCase):
     def setUp(self):
         self.querier = BookmarkQuerier([bookmarks], filter_by_folders=False)
@@ -118,7 +115,6 @@ class TestBookmarkQuerierNoFilterByFolders(unittest.TestCase):
         self.assertEqual(matches[0]["name"], "git tutorial")
         self.assertEqual(matches[1]["name"], "Python Tutorial")
 
-
     def test_doesnot_filter_by_folders(self):
         matches = []
         self.querier.search(bookmarks, "advanced documentation", matches)
@@ -135,20 +131,18 @@ class TestBookmarkQuerierNoFilterByFolders(unittest.TestCase):
     def test_collect_all_matches(self):
         # Create a bookmark structure with many entries
         many_bookmarks = {
-                "type": "folder",
-                "name": "root",
-                "children": [
-                    {
-                        "type": "bookmark",
-                        "name": f"Test {i}",
-                        "url": f"https://test{i}.com"
-                        } for i in range(15)
-                    ]
-                }
+            "type": "folder",
+            "name": "root",
+            "children": [
+                {"type": "bookmark", "name": f"Test {i}", "url": f"https://test{i}.com"}
+                for i in range(15)
+            ],
+        }
 
         matches = []
         self.querier.search(many_bookmarks, "Test", matches)
         self.assertEqual(len(matches), 15)
+
 
 class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
     def setUp(self):
@@ -187,18 +181,15 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
             "type": "folder",
             "name": "root",
             "children": [
-                {
-                    "type": "bookmark",
-                    "name": f"Test {i}",
-                    "url": f"https://test{i}.com"
-                } for i in range(15)
-            ]
+                {"type": "bookmark", "name": f"Test {i}", "url": f"https://test{i}.com"}
+                for i in range(15)
+            ],
         }
 
         matches = []
         self.querier.search(many_bookmarks, "Test", matches)
-        self.assertEqual(len(matches), 15)  # Should stop at max_matches_len 
-    
+        self.assertEqual(len(matches), 15)  # Should stop at max_matches_len
+
     def test_search_matches_parent_folder(self):
         matches = []
         self.querier.search(bookmarks, "python documentation", matches)
@@ -214,7 +205,7 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
         self.assertEqual(len(matches), 1)
         self.assertEqual(matches[0]["name"], "Python Tutorial")
         self.assertEqual(matches[0]["url"], "https://learn.python.org")
-    
+
     def test_filter_by_parent_tree(self):
         # Sanity check
         matches = []
@@ -227,7 +218,7 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
         matches = []
         self.querier.search(bookmarks, "typescript advanced", matches)
         self.assertEqual(len(matches), 3)
-    
+
     def test_filter_by_children_and_grand_children(self):
         # Test that it matches when both parent and bookmark match
         # Should match: python/* && python/Advanced/*
@@ -245,9 +236,10 @@ class TestBookmarkQuerierFilterByFolders(unittest.TestCase):
         # Test that it doesn't match when neither parent nor bookmark match
         matches = []
         self.querier.search(bookmarks, "java", matches)
-        self.assertEqual(len(matches), 0) 
+        self.assertEqual(len(matches), 0)
         self.querier.search(bookmarks, "java docs", matches)
-        self.assertEqual(len(matches), 0) 
+        self.assertEqual(len(matches), 0)
+
 
 class TestBookmarkQuerierIndexer(unittest.TestCase):
     def test_index_bookmark_entry(self):
@@ -256,8 +248,12 @@ class TestBookmarkQuerierIndexer(unittest.TestCase):
         querier.index(bookmarks)
         self.assertEqual(len(querier.indexed_bookmarks), 11)
         self.assertIn("git tutorial https://git.org", querier.indexed_bookmarks)
-        self.assertIn("Python Tutorial https://learn.python.org", querier.indexed_bookmarks)
-        self.assertIn("Python Tricks Tutorial https://realpython.com", querier.indexed_bookmarks)
+        self.assertIn(
+            "Python Tutorial https://learn.python.org", querier.indexed_bookmarks
+        )
+        self.assertIn(
+            "Python Tricks Tutorial https://realpython.com", querier.indexed_bookmarks
+        )
 
     def test_index_folder_entry(self):
         # Test that it indexes a folder entry correctly
