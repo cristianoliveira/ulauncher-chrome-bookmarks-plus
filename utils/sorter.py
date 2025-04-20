@@ -1,5 +1,7 @@
 from datetime import datetime
 
+Item = dict[str, str]
+
 
 class MostVisited:
     """
@@ -10,11 +12,11 @@ class MostVisited:
     def __init__(self):
         self.items = {}
 
-    def add(self, item):
-        if item in self.items:
-            self.items[item] += 1
+    def add(self, key):
+        if key in self.items:
+            self.items[key] += 1
         else:
-            self.items[item] = 1
+            self.items[key] = 1
 
     def sort(self, current_items, by_key):
         sorted_items = sorted(
@@ -50,10 +52,10 @@ class NoSort:
     It simply returns the items as they are.
     """
 
-    def sort(self, current_items, by_key):
+    def sort(self, current_items, _):
         return current_items
 
-    def add(self, by_key):
+    def add(self, _):
         pass
 
 
