@@ -1,7 +1,7 @@
 from typing import Any, List, Dict
 import json
 
-type BookmarkEntry = Dict[str, Any]
+BookmarkEntry = Dict[str, Any]
 
 
 class BookmarkQuerier:
