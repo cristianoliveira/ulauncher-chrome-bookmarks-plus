@@ -23,3 +23,5 @@ jobs:
         run: ruff format
       - name: Run linting checks
         run: ruff check
+      - name: Run tests
+        run: make test
